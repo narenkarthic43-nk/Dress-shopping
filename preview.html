@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Preview - Sudha Dress Shop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: var(--dark);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .preview-card {
+      background: var(--dark-2);
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      max-width: 500px;
+      width: 100%;
+      box-shadow: var(--shadow);
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      max-height: 500px;
+      object-fit: contain;
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="preview-card">
+    <h1 id="product-title">Loading Product...</h1>
+    <img id="product-img" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Product preview" />
+    <p>This is the product reference requested by the customer.</p>
+    <a href="index.html" class="btn-primary">Back to Shop</a>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const cat = urlParams.get('cat');
+      const imgId = urlParams.get('id');
+      const productTitle = document.getElementById('product-title');
+      const productImg = document.getElementById('product-img');
+
+      if (cat) {
+        productTitle.textContent = cat + " Order Reference";
+
+        // Define internal category mappings if needed, else guess from 'cat'
+        // We know categories: sarees, lehengas, suits, kurtis, kids, mens
+        const catMap = {
+          'Sarees': 'sarees',
+          'Lehengas & Choli': 'lehengas',
+          'Salwar Suits': 'suits',
+          'Kurtis & Tops': 'kurtis',
+          'Kids Wear': 'kids',
+          'Mens Wear': 'mens'
+        };
+        const internalCat = catMap[cat] || cat.toLowerCase();
+
+        const loadFromJSONBlob = () => {
+          if (typeof JSONBLOB_ID !== 'undefined' && JSONBLOB_ID) {
+            fetch(`https://jsonblob.com/api/jsonBlob/${JSONBLOB_ID}?t=${Date.now()}`, { cache: 'no-store' })
+              .then(r => r.json())
+              .then(data => {
+                if (data && data.images && data.images[internalCat]) {
+                  let selectedImg = null;
+                  if (imgId) {
+                    selectedImg = data.images[internalCat].find(i => Number(i.ts) === Number(imgId));
+                  }
+                  if (!selectedImg) {
+                    const sorted = data.images[internalCat].sort((a, b) => a.ts - b.ts);
+                    selectedImg = sorted[0];
+                  }
+
+                  if (selectedImg && selectedImg.url) {
+                    productImg.src = selectedImg.url;
+                  } else {
+                    productImg.alt = 'Image not found';
+                  }
+                }
+              }).catch(e => {
+                productTitle.textContent = "Error loading image";
+                console.error(e);
+              });
+          }
+        };
+
+        // Attempt IndexedDB first in case the admin is testing on their own device locally
+        const IDB_NAME = 'sudha_images_v3';
+        const IDB_STORE = 'images';
+        try {
+          const req = indexedDB.open(IDB_NAME, 2);
+          req.onsuccess = e => {
+            const idb = e.target.result;
+            if (!idb.objectStoreNames.contains(IDB_STORE)) {
+              loadFromJSONBlob();
+              return;
+            }
+            const tx = idb.transaction(IDB_STORE, 'readonly');
+            tx.objectStore(IDB_STORE).index('category').getAll(internalCat).onsuccess = (ev) => {
+              if (ev.target.result && ev.target.result.length > 0) {
+                let selectedImg = null;
+                if (imgId) {
+                  selectedImg = ev.target.result.find(i => Number(i.ts) === Number(imgId));
+                }
+                if (!selectedImg) {
+                  const sorted = ev.target.result.sort((a, b) => a.ts - b.ts);
+                  selectedImg = sorted[0];
+                }
+
+                if (selectedImg && selectedImg.url) {
+                  productImg.src = selectedImg.url;
+                } else {
+                  loadFromJSONBlob();
+                }
+              } else {
+                loadFromJSONBlob();
+              }
+            };
+          };
+          req.onerror = loadFromJSONBlob;
+        } catch (e) {
+          loadFromJSONBlob();
+        }
+      } else {
+        productTitle.textContent = "Product Not Found";
+      }
+    });
+  </script>
+</body>
+
+</html>

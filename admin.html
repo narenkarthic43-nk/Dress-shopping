@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — Sudha Dress Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e0c26a;
+      --bg: #0d0802;
+      --card: #1a1209;
+      --card2: #221a0d;
+      --border: rgba(201, 168, 76, 0.18);
+      --text: #f0e8d0;
+      --muted: rgba(240, 232, 208, 0.55);
+      --danger: #ef4444;
+      --success: #22c55e;
+      --sidebar-w: 260px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 1.8rem 1.5rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-logo .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #1a0f00;
+      margin-bottom: 0.6rem;
+    }
+
+    .sidebar-logo h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--gold);
+    }
+
+    .sidebar-logo p {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    .admin-badge-small {
+      background: rgba(201, 168, 76, 0.12);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.68rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: inline-block;
+      margin-top: 0.4rem;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.75rem 1.5rem;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+      text-decoration: none;
+    }
+
+    .nav-item:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .nav-item.active {
+      color: var(--gold);
+      background: rgba(201, 168, 76, 0.08);
+      border-left-color: var(--gold);
+    }
+
+    .nav-item i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-sidebar-logout {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 10px;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.08);
+      color: #f87171;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .btn-sidebar-logout:hover {
+      background: rgba(239, 68, 68, 0.14);
+    }
+
+    .view-site-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-decoration: none;
+      margin-bottom: 0.8rem;
+      transition: color 0.2s;
+    }
+
+    .view-site-link:hover {
+      color: var(--gold);
+    }
+
+    /* ── Main Content ── */
+    .main-content {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 2rem;
+      max-width: 1200px;
+    }
+
+    /* Panels */
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--gold);
+    }
+
+    .page-header p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(201, 168, 76, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 1.2rem;
+    }
+
+    .stat-info h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .stat-info p {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* Upload Zone */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 2.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+    }
+
+    .upload-zone:hover,
+    .upload-zone.dragover {
+      border-color: var(--gold);
+      background: rgba(201, 168, 76, 0.05);
+    }
+
+    .upload-zone i {
+      font-size: 2.5rem;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+
+    .upload-zone h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .upload-zone p {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .upload-zone input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Section Select */
+    .select-row {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+    }
+
+    .section-chip {
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .section-chip.active,
+    .section-chip:hover {
+      background: rgba(201, 168, 76, 0.12);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* Image Gallery */
+    .img-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+
+    .img-item {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .img-item:hover {
+      transform: scale(1.02);
+    }
+
+    .img-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .img-item .img-actions {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .img-item:hover .img-actions {
+      opacity: 1;
+    }
+
+    .img-actions button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s;
+    }
+
+    .img-actions button:hover {
+      transform: scale(1.1);
+    }
+
+    .btn-use {
+      background: var(--gold);
+      color: #1a0f00;
+    }
+
+    .btn-confirm {
+      background: #3b82f6;
+      color: #fff;
+    }
+
+    .btn-del {
+      background: rgba(239, 68, 68, 0.9);
+      color: #fff;
+    }
+
+    .img-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      font-size: 0.7rem;
+      padding: 0.3rem 0.5rem;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Text Editor */
+    .text-field-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .text-field-group label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    .text-field-group input,
+    .text-field-group textarea {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .text-field-group input:focus,
+    .text-field-group textarea:focus {
+      border-color: var(--gold);
+    }
+
+    .text-field-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Buttons */
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: #1a0f00;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.25s;
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(201, 168, 76, 0.4);
+    }
+
+    .btn-gold:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-outline-gold {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 0.65rem 1.2rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .btn-outline-gold:hover {
+      background: rgba(201, 168, 76, 0.1);
+    }
+
+    /* Upload progress */
+    .upload-progress {
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 10px;
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .upload-status {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.3rem;
+      font-size: 0.88rem;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      max-width: 320px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      border-color: rgba(34, 197, 94, 0.3);
+      color: #4ade80;
+    }
+
+    .toast.error {
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+
+    .toast.info {
+      border-color: var(--border);
+      color: var(--gold);
+    }
+
+    /* Offer cards editor */
+    .offer-editors {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .offer-editor-card {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.2rem;
+    }
+
+    .offer-editor-card h4 {
+      color: var(--gold);
+      font-size: 0.88rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+    }
+
+    .sync-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.4
+      }
+    }
+
+    .sync-status.offline .sync-dot {
+      background: #ef4444;
+      animation: none;
+    }
+
+    /* Responsive mobile sidebar */
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 200;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.6rem 0.8rem;
+      color: var(--gold);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    @media(max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 1rem;
+        padding-top: 4rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Mobile menu toggle -->
+  <button class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="fas fa-store"></i></div>
+      <h2>Sudha <em>Dress Shop</em></h2>
+      <p>Sales &amp; Tailoring — Admin</p>
+      <span class="admin-badge-small"><i class="fas fa-shield-alt"></i> Owner Access</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active" onclick="showPanel('dashboard')" href="#">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a>
+      <a class="nav-item" onclick="showPanel('orders')" href="#">
+        <i class="fas fa-shopping-cart"></i> Orders
+      </a>
+      <a class="nav-item" onclick="showPanel('sales')" href="#">
+        <i class="fas fa-hand-holding-usd"></i> Sales History
+      </a>
+      <a class="nav-item" onclick="showPanel('images')" href="#">
+        <i class="fas fa-images"></i> Upload Images
+      </a>
+      <a class="nav-item" onclick="showPanel('collections')" href="#">
+        <i class="fas fa-layer-group"></i> Edit Collections
+      </a>
+      <a class="nav-item" onclick="showPanel('offers')" href="#">
+        <i class="fas fa-tags"></i> Edit Offers
+      </a>
+      <a class="nav-item" onclick="showPanel('services')" href="#">
+        <i class="fas fa-cut"></i> Tailoring Services
+      </a>
+      <a class="nav-item" onclick="showPanel('pricing')" href="#">
+        <i class="fas fa-rupee-sign"></i> Pricing Table
+      </a>
+      <a class="nav-item" onclick="showPanel('content')" href="#">
+        <i class="fas fa-edit"></i> Edit Content
+      </a>
+      <a class="nav-item" onclick="showPanel('customers')" href="#">
+        <i class="fas fa-users"></i> Customers
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="index.html" class="view-site-link" target="_blank">
+        <i class="fas fa-external-link-alt"></i> View Live Website
+      </a>
+      <button class="btn-sidebar-logout" onclick="adminLogout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="main-content">
+
+    <!-- ── DASHBOARD PANEL ── -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="page-header">
+        <h1><i class="fas fa-th-large"></i> Dashboard</h1>
+        <p>Welcome to Sudha Dress Shop admin panel. Manage your website content here.</p>
+      </div>
+
+      <div class="stats-row" id="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-images"></i></div>
+          <div class="stat-info">
+            <h3 id="stat-images">0</h3>
+            <p>Images Uploaded</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-info">
+            <h3 id="stat-customers">0</h3>
+            <p>Registered Customers</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+          <div class="stat-info">
+            <h3 id="stat-orders">0</h3>
+            <p>Pending Orders</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(34,197,94,0.1);color:#22c55e;"><i class="fas fa-check-double"></i></div>
+          <div class="stat-info">
+            <h3 id="stat-sales">0</h3>
+            <p>Confirmed Sales</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-sync-alt"></i></div>
+          <div class="stat-info">
+            <h3 id="stat-sync">Live</h3>
+            <p>Sync Status</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <i class="fas fa-bolt"></i> Quick Actions
+        </div>
+        <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+          <button class="btn-gold" onclick="showPanel('images')"><i class="fas fa-upload"></i> Upload Image</button>
+          <button class="btn-gold" onclick="showPanel('offers')"><i class="fas fa-tags"></i> Edit Offers</button>
+          <button class="btn-gold" onclick="showPanel('content')"><i class="fas fa-edit"></i> Edit Text</button>
+          <a href="index.html" target="_blank" class="btn-outline-gold"><i class="fas fa-eye"></i> Preview Site</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-info-circle"></i> Sync Information</div>
+        <div class="sync-status" id="sync-status-main">
+          <div class="sync-dot"></div>
+          <span id="sync-text">Checking connection...</span>
+        </div>
+        <p style="color:var(--muted);font-size:0.83rem;margin-top:0.8rem; line-height:1.7;">
+          When you upload images or change content, the changes are saved to the cloud and
+          automatically appear on <strong style="color:var(--text)">all devices</strong> —
+          mobile, laptop, tablet — within seconds.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── ORDERS PANEL ── -->
+    <div class="panel" id="panel-orders">
+      <div class="page-header">
+        <h1><i class="fas fa-shopping-cart"></i> Pending Orders</h1>
+        <p>Manage customer orders placed from the website here.</p>
+      </div>
+      <div class="card" style="overflow-x:auto;">
+        <div id="orders-list">
+          <p style="color:var(--muted);font-size:0.85rem;padding:1rem 0;">Loading orders...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── IMAGE UPLOAD PANEL ── -->
+    <div class="panel" id="panel-images">
+      <div class="page-header">
+        <h1><i class="fas fa-images"></i> Upload Images</h1>
+        <p>Upload product images — they will automatically appear on the website on all devices.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-folder-open"></i> Select Category</div>
+        <div class="select-row" id="category-chips">
+          <button class="section-chip active" data-cat="hero" onclick="selectCategory(this)">Hero/Banner</button>
+          <button class="section-chip" data-cat="expert" onclick="selectCategory(this)">About / Expert</button>
+          <button class="section-chip" data-cat="sarees" onclick="selectCategory(this)">Sarees</button>
+          <button class="section-chip" data-cat="lehengas" onclick="selectCategory(this)">Lehengas</button>
+          <button class="section-chip" data-cat="suits" onclick="selectCategory(this)">Salwar Suits</button>
+          <button class="section-chip" data-cat="kurtis" onclick="selectCategory(this)">Kurtis &amp; Tops</button>
+          <button class="section-chip" data-cat="kids" onclick="selectCategory(this)">Kids' Wear</button>
+          <button class="section-chip" data-cat="mens" onclick="selectCategory(this)">Men's Wear</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-cloud-upload-alt"></i> Upload Images</div>
+
+        <!-- Image Caption Field (Step 3) -->
+        <div class="text-field-group" style="margin-bottom:1rem;">
+          <label><i class="fas fa-tag"></i> Image Caption / Description <span
+              style="color:var(--muted);font-weight:400;">(optional — shown in collection gallery)</span></label>
+          <input type="text" id="img-caption" placeholder="e.g. Red Silk Saree with Gold Border, ₹1200" />
+        </div>
+
+        <div class="upload-zone" id="upload-zone">
+          <input type="file" id="img-file-input" accept="image/*" multiple onchange="handleFileSelect(event)" />
+          <i class="fas fa-cloud-upload-alt"></i>
+          <h3>Drag &amp; Drop images here</h3>
+          <p>or click to select files — JPG, PNG, WEBP (max 10MB each)</p>
+        </div>
+
+        <div class="upload-progress" id="upload-progress">
+          <div class="upload-status" id="upload-status">Uploading...</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-th"></i> Uploaded Images — <span
+            id="current-cat-label">Hero/Banner</span></div>
+        <div class="img-gallery" id="img-gallery">
+          <p style="color:var(--muted);font-size:0.85rem; grid-column:1/-1;">No images uploaded yet for this category.
+            Upload images above.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── OFFERS EDITOR PANEL ── -->
+    <div class="panel" id="panel-offers">
+      <div class="page-header">
+        <h1><i class="fas fa-tags"></i> Edit Offers</h1>
+        <p>Change the special offer cards shown on the website. Saved changes sync to all devices.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-edit"></i> Offer Cards</div>
+        <div class="offer-editors">
+          <!-- Offer 1 -->
+          <div class="offer-editor-card">
+            <h4><i class="fas fa-heart" style="color:#ef4444"></i> Offer 1 — Bridal Package</h4>
+            <div class="text-field-group">
+              <label>Offer Title</label>
+              <input type="text" id="offer1-title" value="Bridal Package" />
+            </div>
+            <div class="text-field-group">
+              <label>Offer Description</label>
+              <textarea
+                id="offer1-desc">Buy any bridal lehenga + get free blouse stitching + 10% off on saree!</textarea>
+            </div>
+            <div class="text-field-group">
+              <label>Badge Label</label>
+              <input type="text" id="offer1-badge" value="Limited Time" />
+            </div>
+          </div>
+          <!-- Offer 2 -->
+          <div class="offer-editor-card">
+            <h4><i class="fas fa-tags" style="color:var(--gold)"></i> Offer 2 — Combo</h4>
+            <div class="text-field-group">
+              <label>Offer Title</label>
+              <input type="text" id="offer2-title" value="Combo Offer" />
+            </div>
+            <div class="text-field-group">
+              <label>Offer Description</label>
+              <textarea id="offer2-desc">Buy 3 sarees and get the 4th at 50% off. Mix and match any design!</textarea>
+            </div>
+            <div class="text-field-group">
+              <label>Badge Label</label>
+              <input type="text" id="offer2-badge" value="Ongoing" />
+            </div>
+          </div>
+          <!-- Offer 3 -->
+          <div class="offer-editor-card">
+            <h4><i class="fas fa-cut" style="color:#60a5fa"></i> Offer 3 — Stitch &amp; Save</h4>
+            <div class="text-field-group">
+              <label>Offer Title</label>
+              <input type="text" id="offer3-title" value="Stitch + Save" />
+            </div>
+            <div class="text-field-group">
+              <label>Offer Description</label>
+              <textarea
+                id="offer3-desc">Purchase fabric from us and get stitching at flat ₹100 off per garment!</textarea>
+            </div>
+            <div class="text-field-group">
+              <label>Badge Label</label>
+              <input type="text" id="offer3-badge" value="Exclusive" />
+            </div>
+          </div>
+          <!-- Offer 4 -->
+          <div class="offer-editor-card">
+            <h4><i class="fas fa-star" style="color:#facc15"></i> Offer 4 — Festival Special</h4>
+            <div class="text-field-group">
+              <label>Offer Title</label>
+              <input type="text" id="offer4-title" value="Festival Special" />
+            </div>
+            <div class="text-field-group">
+              <label>Offer Description</label>
+              <textarea
+                id="offer4-desc">Up to 30% off on select collections during festival seasons. Visit the shop!</textarea>
+            </div>
+            <div class="text-field-group">
+              <label>Badge Label</label>
+              <input type="text" id="offer4-badge" value="Seasonal" />
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.5rem; display:flex; gap:0.8rem; flex-wrap:wrap;">
+          <button class="btn-gold" onclick="saveOffers()"><i class="fas fa-save"></i> Save &amp; Sync All
+            Offers</button>
+          <button class="btn-outline-gold" onclick="loadOffers()"><i class="fas fa-redo"></i> Reload Saved</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CONTENT EDITOR PANEL ── -->
+    <div class="panel" id="panel-content">
+      <div class="page-header">
+        <h1><i class="fas fa-edit"></i> Edit Content</h1>
+        <p>Change text visible on the main website — announcement, hero text, and more.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-bullhorn"></i> Announcement Banner</div>
+        <div class="text-field-group">
+          <label>Announcement Text (shown at the top of the website)</label>
+          <input type="text" id="content-announcement"
+            value="🎉 New Arrivals: Bridal Sarees &amp; Designer Lehengas — Visit Sudha Dress Shop Today!" />
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-home"></i> Hero Section</div>
+        <div class="text-field-group">
+          <label>Hero Sub-title</label>
+          <input type="text" id="content-hero-sub" value="Fashion That Feels Like You" />
+        </div>
+        <div class="text-field-group">
+          <label>Hero Description</label>
+          <textarea
+            id="content-hero-desc">Premium dress sales &amp; expert tailoring — sarees, lehengas, suits, bridal wear &amp; custom stitching, all under one roof.</textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-scroll"></i> Scrolling Ticker Text</div>
+        <div class="text-field-group">
+          <label>Ticker items (one per line)</label>
+          <textarea id="content-ticker" rows="6">🛍️ New Arrivals Every Week
+✂️ Custom Stitching Available
+👰 Bridal Lehenga Special
+📞 Call: 86673 28473
+🎁 Festival Season Offers
+🌟 Designer Sarees in Stock</textarea>
+        </div>
+      </div>
+
+      <button class="btn-gold" onclick="saveContent()"><i class="fas fa-save"></i> Save &amp; Sync Content</button>
+    </div>
+
+    <!-- ── CUSTOMERS PANEL ── -->
+    <div class="panel" id="panel-customers">
+      <div class="page-header">
+        <h1><i class="fas fa-users"></i> Customers</h1>
+        <p>Registered customer accounts.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fas fa-user-friends"></i> Customer List</div>
+        <div id="customer-list" style="overflow-x:auto;"></div>
+      </div>
+    </div>
+
+    <!-- ── COLLECTIONS EDITOR PANEL ── -->
+    <div class="panel" id="panel-collections">
+      <div class="page-header">
+        <h1><i class="fas fa-layer-group"></i> Edit Collections</h1>
+        <p>Change the title, description and price shown on each collection card on the home page.</p>
+      </div>
+      <div class="offer-editors">
+        <!-- Sarees -->
+        <div class="offer-editor-card">
+          <h4><i class="fas fa-sari" style="color:var(--gold)"></i> Sarees</h4>
+          <div class="text-field-group">
+            <label>Title</label><input type="text" id="col-sarees-title" value="Sarees" />
+          </div>
+          <div class="text-field-group">
+            <label>Description</label>
+            <textarea
+              id="col-sarees-desc">Silk, cotton, georgette, chiffon &amp; designer sarees for all occasions.</textarea>
+          </div>
+          <div class="text-field-group">
+            <label>Starting Price</label><input type="text" id="col-sarees-price" value="Starting at ₹499" />
+          </div>
+        </div>
+        <!-- Lehengas -->
+        <div class="offer-editor-card">
+          <h4><i class="fas fa-star" style="color:var(--gold)"></i> Lehengas &amp; Choli</h4>
+          <div class="text-field-group">
+            <label>Title</label><input type="text" id="col-lehengas-title" value="Lehengas &amp; Choli" />
+          </div>
+          <div class="text-field-group">
+            <label>Description</label>
+            <textarea
+              id="col-lehengas-desc">Bridal lehengas, party wear, and festival lehengas with intricate embroidery.</textarea>
+          </div>
+          <div class="text-field-group">
+            <label>Starting Price</label><input type="text" id="col-lehengas-price" value="Starting at ₹1,499" />
+          </div>
+        </div>
+        <!-- Salwar Suits -->
+        <div class="offer-editor-card">
+          <h4><i class="fas fa-tshirt" style="color:var(--gold)"></i> Salwar Suits</h4>
+          <div class="text-field-group">
+            <label>Title</label><input type="text" id="col-suits-title" value="Salwar Suits" />
+          </div>
+          <div class="text-field-group">
+            <label>Description</label>
+            <textarea
+              id="col-suits-desc">Cotton, silk, and designer salwar kameez sets for daily and special wear.</textarea>
+          </div>
+          <div class="text-field-group">
+            <label>Starting Price</label><input type="text" id="col-suits-price" value="Starting at ₹799" />
+          </div>
+        </div>
+        <!-- Kurtis -->
+        <div class="offer-editor-card">
+          <h4><i class="fas fa-female" style="color:var(--gold)"></i> Kurtis &amp; Tops</h4>
+          <div class="text-field-group">
+            <label>Title</label><input type="text" id="col-kurtis-title" value="Kurtis &amp; Tops" />
+          </div>
+          <div class="text-field-group">
+            <label>Description</label>
+            <textarea
+              id="col-kurtis-desc">Trendy and comfortable kurtis, tops, and western wear for modern women.</textarea>
+          </div>
+          <div class="text-field-group">
+            <label>Starting Price</label><input type="text" id="col-kurtis-price" value="Starting at ₹299" />
+          </div>
+        </div>
+        <!-- Kids -->
+        <div class="offer-editor-card">
+          <h4><i class="fas fa-child" style="color:var(--gold)"></i> Kids' Wear</h4>
+          <div class="text-field-group">
+            <label>Title</label><input type="text" id="col-kids-title" value="Kids' Wear" />
+          </div>
+          <div class="text-field-group">
+            <label>Description</label>
+            <textarea
+              id="col-kids-desc">Adorable frocks, ethnic sets, uniforms, and casual clothes for children.</textarea>
+          </div>
+          <div class="text-field-group">
+            <label>Starting Price</label><input type="text" id="col-kids-price" value="Starting at ₹199" />
+          </div>
+        </div>
+        <!-- Mens -->
+        <div class="offer-editor-card">
+          <h4><i class="fas fa-male" style="color:var(--gold)"></i> Men's Wear</h4>
+          <div class="text-field-group">
+            <label>Title</label><input type="text" id="col-mens-title" value="Men's Wear" />
+          </div>
+          <div class="text-field-group">
+            <label>Description</label>
+            <textarea id="col-mens-desc">Dhotis, veshtis, kurta pajamas, shirts, and ethnic wear for men.</textarea>
+          </div>
+          <div class="text-field-group">
+            <label>Starting Price</label><input type="text" id="col-mens-price" value="Starting at ₹399" />
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;display:flex;gap:0.8rem;flex-wrap:wrap;">
+        <button class="btn-gold" onclick="saveCollections()"><i class="fas fa-save"></i> Save &amp; Sync
+          Collections</button>
+        <button class="btn-outline-gold" onclick="loadCollections()"><i class="fas fa-redo"></i> Reload Saved</button>
+      </div>
+    </div>
+
+    <!-- ── TAILORING SERVICES PANEL ── -->
+    <div class="panel" id="panel-services">
+      <div class="page-header">
+        <h1><i class="fas fa-cut"></i> Edit Tailoring Services</h1>
+        <p>Edit the 6 Expert Tailoring Service cards shown on the website.</p>
+      </div>
+      <div class="offer-editors">
+        <div class="offer-editor-card">
+          <h4><i class="fas fa-ruler-combined" style="color:var(--gold)"></i> Service 1</h4>
+          <div class="text-field-group">
+            <label>Service Title</label><input type="text" id="svc1-title" value="Custom Stitching" />
+          </div>
+          <div class="text-field-group">
+            <label>Description</label>
+            <textarea
+              id="svc1-desc">Blouses, salwar suits, kurtas, frocks — stitched to your exact measurements.</textarea>
+          </div>
+        </div>
+        <div class="offer-editor-card">
+          <h4><i class="fas fa-scissors" style="color:var(--gold)"></i> Service 2</h4>
+          <div class="text-field-group">
+            <label>Service Title</label><input type="text" id="svc2-title" value="Alterations" />
+          </div>
+          <div class="text-field-group">
+            <label>Description</label>
+            <textarea
+              id="svc2-desc">Resizing, hemming, shortening, and repairing any garment quickly and neatly.</textarea>
+          </div>
+        </div>
+        <div class="offer-editor-card">
+          <h4><i class="fas fa-tshirt" style="color:var(--gold)"></i> Service 3</h4>
+          <div class="text-field-group">
+            <label>Service Title</label><input type="text" id="svc3-title" value="Blouse Stitching" />
+          </div>
+          <div class="text-field-group">
+            <label>Description</label>
+            <textarea
+              id="svc3-desc">Saree blouses with designer backs, patterns, and embellishments of your choice.</textarea>
+          </div>
+        </div>
+        <div class="offer-editor-card">
+          <h4><i class="fas fa-crown" style="color:var(--gold)"></i> Service 4</h4>
+          <div class="text-field-group">
+            <label>Service Title</label><input type="text" id="svc4-title" value="Bridal Stitching" />
+          </div>
+          <div class="text-field-group">
+            <label>Description</label>
+            <textarea
+              id="svc4-desc">Bridal blouses, lehenga cholis, and gown alterations for your perfect wedding look.</textarea>
+          </div>
+        </div>
+        <div class="offer-editor-card">
+          <h4><i class="fas fa-star" style="color:var(--gold)"></i> Service 5</h4>
+          <div class="text-field-group">
+            <label>Service Title</label><input type="text" id="svc5-title" value="Embroidery Work" />
+          </div>
+          <div class="text-field-group">
+            <label>Description</label>
+            <textarea id="svc5-desc">Thread work, mirror work, and zari embroidery added to any garment.</textarea>
+          </div>
+        </div>
+        <div class="offer-editor-card">
+          <h4><i class="fas fa-child" style="color:var(--gold)"></i> Service 6</h4>
+          <div class="text-field-group">
+            <label>Service Title</label><input type="text" id="svc6-title" value="Kids' Stitching" />
+          </div>
+          <div class="text-field-group">
+            <label>Description</label>
+            <textarea id="svc6-desc">School uniforms, frocks, ethnic wear and party outfits for children.</textarea>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;display:flex;gap:0.8rem;flex-wrap:wrap;">
+        <button class="btn-gold" onclick="saveServices()"><i class="fas fa-save"></i> Save &amp; Sync Services</button>
+        <button class="btn-outline-gold" onclick="loadServices()"><i class="fas fa-redo"></i> Reload Saved</button>
+      </div>
+    </div>
+
+    <!-- ── PRICING TABLE PANEL ── -->
+    <div class="panel" id="panel-pricing">
+      <div class="page-header">
+        <h1><i class="fas fa-rupee-sign"></i> Edit Pricing Table</h1>
+        <p>Change tailoring prices shown on the website. Only the owner can change these.</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fas fa-table"></i> Price List (9 rows)</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);">
+                <th style="text-align:left;padding:0.6rem;color:var(--gold);font-size:0.8rem;">ROW</th>
+                <th style="text-align:left;padding:0.6rem;color:var(--gold);font-size:0.8rem;">SERVICE NAME</th>
+                <th style="text-align:left;padding:0.6rem;color:var(--gold);font-size:0.8rem;">PRICE</th>
+                <th style="text-align:left;padding:0.6rem;color:var(--gold);font-size:0.8rem;">DELIVERY TIME</th>
+              </tr>
+            </thead>
+            <tbody id="admin-pricing-rows"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:1.5rem;display:flex;gap:0.8rem;flex-wrap:wrap;">
+          <button class="btn-gold" onclick="savePricing()"><i class="fas fa-save"></i> Save &amp; Sync Prices</button>
+          <button class="btn-outline-gold" onclick="loadPricing()"><i class="fas fa-redo"></i> Reload Saved</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SALES HISTORY PANEL ── -->
+    <div class="panel" id="panel-sales">
+      <div class="page-header">
+        <h1><i class="fas fa-history"></i> Sales History</h1>
+        <p>View all completed sales. Items in this list have been automatically removed from the website.</p>
+      </div>
+      <div class="card" style="overflow-x:auto;">
+        <div id="sales-list">
+          <p style="color:var(--muted);font-size:0.85rem;padding:1rem 0;">Loading sales history...</p>
+        </div>
+      </div>
+    </div>
+
+  </main><!-- /.main-content -->
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="admin.js"></script>
+</body>
+
+</html>

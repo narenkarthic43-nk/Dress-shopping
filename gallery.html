@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudha Dress Shop — Pro Image Gallery</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --gold: #c9a84c;
+            --bg: #0f0a02;
+            --card: #1a1410;
+            --text: #ffffff;
+            --muted: rgba(255, 255, 255, 0.6);
+            --border: rgba(201, 168, 76, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--muted);
+        }
+
+        /* ── Upload Section ── */
+        .upload-card {
+            background: var(--card);
+            border: 1px dashed var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            transition: all 0.3s;
+        }
+
+        .upload-card:hover {
+            border-color: var(--gold);
+            background: rgba(201, 168, 76, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #c9a84c, #e0c26a);
+            color: #1a0f00;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .file-label:hover {
+            transform: scale(1.05);
+        }
+
+        #image-input {
+            display: none;
+        }
+
+        /* ── Preview Grid ── */
+        #preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .preview-thumb {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        /* ── Loading Overlay ── */
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader {
+            border: 4px solid var(--card);
+            border-top: 4px solid var(--gold);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── Gallery Grid ── */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: var(--card);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gold);
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .upload-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Pro Image Gallery</h1>
+            <p>Instant Cloud Hosting & Progressive Display</p>
+        </header>
+
+        <div class="upload-card">
+            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+            <h3>Upload Multiple Documents</h3>
+            <p>Select 100+ images for instant Cloudinary processing</p>
+            <label for="image-input" class="file-label">
+                <i class="fas fa-images"></i> Select Multiple Images
+            </label>
+            <input type="file" id="image-input" multiple accept="image/*">
+
+            <div id="preview-container"></div>
+
+            <button id="btn-upload-all" class="file-label"
+                style="display:none; background: #22c55e; color: #fff; margin-left: 10px;">
+                <i class="fas fa-check"></i> Upload All to Cloud
+            </button>
+        </div>
+
+        <div class="gallery-grid" id="main-gallery">
+            <!-- Uploaded images will appear here -->
+        </div>
+    </div>
+
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <p style="margin-top: 1rem;" id="load-text">Uploading to Cloudinary...</p>
+    </div>
+
+    <script>
+        // ── CONFIGURATION (REPLACE WITH YOUR DETAILS) ──
+        const CLOUD_NAME = 'YOUR_CLOUD_NAME';
+        const UPLOAD_PRESET = 'YOUR_UPLOAD_PRESET';
+
+        const imageInput = document.getElementById('image-input');
+        const previewContainer = document.getElementById('preview-container');
+        const btnUpload = document.getElementById('btn-upload-all');
+        const gallery = document.getElementById('main-gallery');
+        const overlay = document.getElementById('loading-overlay');
+        const loadText = document.getElementById('load-text');
+
+        let selectedFiles = [];
+
+        // 1. SELECT & PREVIEW
+        imageInput.addEventListener('change', (e) => {
+            selectedFiles = Array.from(e.target.files);
+            previewContainer.innerHTML = '';
+
+            selectedFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = document.createElement('img');
+                    img.src = ev.target.result;
+                    img.className = 'preview-thumb';
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            if (selectedFiles.length > 0) btnUpload.style.display = 'inline-block';
+        });
+
+        // 2. MULTI-UPLOAD LOGIC
+        btnUpload.addEventListener('click', async () => {
+            if (CLOUD_NAME === 'YOUR_CLOUD_NAME') {
+                alert('Please edit the code and enter your CLOUD_NAME first!');
+                return;
+            }
+
+            overlay.style.display = 'flex';
+            let uploadedCount = 0;
+
+            for (const file of selectedFiles) {
+                uploadedCount++;
+                loadText.textContent = `Uploading ${uploadedCount} of ${selectedFiles.length}...`;
+
+                try {
+                    const secureUrl = await uploadToCloudinary(file);
+                    if (secureUrl) {
+                        addProductToGallery(secureUrl, file.name);
+                    }
+                } catch (err) {
+                    console.error('Upload failed for:', file.name);
+                }
+            }
+
+            overlay.style.display = 'none';
+            previewContainer.innerHTML = '';
+            btnUpload.style.display = 'none';
+            selectedFiles = [];
+        });
+
+        // 3. CLOUDINARY API FETCH
+        async function uploadToCloudinary(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', UPLOAD_PRESET);
+
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await res.json();
+            return data.secure_url;
+        }
+
+        // 4. DISPLAY ON WEBSITE
+        function addProductToGallery(url, name) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+        <img src="${url}" class="product-img" loading="lazy">
+        <div class="product-info">
+          <p class="product-name">${name.split('.')[0]}</p>
+          <p class="product-price">₹ ${(Math.random() * 2000 + 500).toFixed(0)}</p>
+        </div>
+      `;
+            gallery.prepend(card);
+        }
+    </script>
+</body>
+
+</html>

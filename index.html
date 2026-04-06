@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sudha Dress Shop | Premium Dress Sales & Tailoring</title>
+  <meta name="description"
+    content="Sudha Dress Shop – Your one-stop destination for premium dress sales, custom tailoring, sarees, lehengas, suits, and bridal wear. Call: 86673 28473" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Dynamic admin banner */
+    #admin-bar {
+      display: none;
+      background: linear-gradient(135deg, #c9a84c, #e0c26a);
+      color: #1a0f00;
+      text-align: center;
+      padding: 0.5rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      position: relative;
+      z-index: 1001;
+    }
+
+    #admin-bar a {
+      color: #1a0f00;
+      margin-left: 0.6rem;
+      text-decoration: underline;
+    }
+
+    /* WhatsApp float fix */
+    .fab-whatsapp {
+      text-decoration: none;
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      width: 56px;
+      height: 56px;
+      background: #25D366;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      z-index: 999;
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .fab-whatsapp:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 24px rgba(37, 211, 102, 0.6);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Admin Quick Bar (shows only when admin is logged in) -->
+  <div id="admin-bar">
+    <i class="fas fa-shield-alt"></i> Admin Mode Active —
+    <a href="admin.html">Open Admin Panel</a>
+    &nbsp;|&nbsp;
+    <a href="#" onclick="adminLogoutFront()">Logout</a>
+  </div>
+
+  <!-- ═══ ANNOUNCEMENT BANNER ═══ -->
+  <div class="announcement-bar" id="announcement">
+    <span>🎉 New Arrivals: Bridal Sarees & Designer Lehengas — Visit Sudha Dress Shop Today!</span>
+    <button onclick="this.parentElement.style.display='none'" aria-label="Close">✕</button>
+  </div>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a class="nav-logo" href="#home" id="logo-link">
+        <div class="logo-icon"><i class="fas fa-store"></i></div>
+        <div class="logo-text">
+          <span class="logo-main">Sudha <em>Dress Shop</em></span>
+          <span class="logo-tagline">Sales & Tailoring</span>
+        </div>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#collections">Collections</a></li>
+        <li><a href="#tailoring">Tailoring</a></li>
+        <li><a href="#offers">Offers</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <span id="nav-user-info"
+          style="display:none;font-size:0.82rem;color:rgba(255,255,255,0.9);margin-right:1rem;"></span>
+        <button id="btn-my-orders" onclick="showUserOrders()" style="display:none; background:rgba(201,168,76,0.15); color:var(--gold); border:1px solid rgba(201,168,76,0.4); padding:0.5rem 0.9rem; border-radius:50px; font-size:0.8rem; font-weight:600; cursor:pointer; margin-right:0.6rem;">
+          <i class="fas fa-shopping-bag"></i> My Orders
+        </button>
+        <a href="login.html" class="btn-login" id="btn-login-nav">
+          <i class="fas fa-user"></i> Login
+        </a>
+        <a href="tel:+918667328473" class="btn-nav-call" id="btn-nav-call">
+          <i class="fas fa-phone"></i> Call Us
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="home">
+    <div class="hero-overlay"></div>
+    <img
+      src="https://static.vecteezy.com/system/resources/previews/047/023/912/non_2x/row-of-dresses-hanging-on-rack-free-photo.jpeg"
+      alt="Sudha Dress Shop" class="hero-bg" id="hero-bg-img" />
+    <div class="hero-content reveal">
+      <div class="hero-brand-badge">✦ Trusted Since 2010 ✦</div>
+      <h1 class="hero-title">
+        <span class="hero-shop-name">Sudha <em>Dress Shop</em></span>
+        <span class="hero-sub-title">Fashion That Feels Like You</span>
+      </h1>
+      <p class="hero-desc">Premium dress sales &amp; expert tailoring — sarees, lehengas, suits, bridal wear &amp;
+        custom stitching, all under one roof.</p>
+      <div class="hero-btns">
+        <a href="#collections" class="btn-primary" id="btn-view-collections">
+          <i class="fas fa-shopping-bag"></i> Shop Collections
+        </a>
+        <a href="#tailoring" class="btn-outline" id="btn-view-tailoring">
+          <i class="fas fa-cut"></i> Tailoring Services
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">15+</span><span class="stat-label">Years of Trust</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">10000+</span><span class="stat-label">Happy Customers</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">500+</span><span class="stat-label">Dress Varieties</span></div>
+      </div>
+    </div>
+    <a href="#about" class="scroll-indicator" id="scroll-down">
+      <i class="fas fa-chevron-down"></i>
+    </a>
+  </section>
+
+  <!-- ═══ ADVERTISEMENT BANNER ═══ -->
+  <section class="advert-strip">
+    <div class="advert-scroll">
+      <span>🛍️ New Arrivals Every Week</span>
+      <span>✂️ Custom Stitching Available</span>
+      <span>👰 Bridal Lehenga Special</span>
+      <span>📞 Call: 86673 28473</span>
+      <span>🎁 Festival Season Offers</span>
+      <span>🌟 Designer Sarees in Stock</span>
+      <span>🛍️ New Arrivals Every Week</span>
+      <span>✂️ Custom Stitching Available</span>
+      <span>👰 Bridal Lehenga Special</span>
+      <span>📞 Call: 86673 28473</span>
+      <span>🎁 Festival Season Offers</span>
+      <span>🌟 Designer Sarees in Stock</span>
+    </div>
+  </section>
+
+  <!-- ═══ ABOUT ═══ -->
+  <section class="about section" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-img-wrap reveal">
+          <img
+            src="https://tse2.mm.bing.net/th/id/OIP.Qku-lEmgQX52SboHd8xIPwHaJ3?pid=ImgDet&w=182&h=242&c=7&dpr=1.3&o=7&rm=3"
+            alt="Expert tailoring at Sudha Dress Shop" class="about-img" id="img-expert" />
+          <div class="about-badge">
+            <i class="fas fa-certificate"></i>
+            <div>
+              <strong>20+ Years</strong>
+              <span>Trusted Shop</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-text reveal delay-1">
+          <p class="section-label">Who We Are</p>
+          <h2 class="section-title">Your Neighbourhood <em>Fashion Destination</em></h2>
+          <p class="about-desc">Welcome to <strong>Sudha Dress Shop</strong> — a family-owned fashion store that has
+            been serving the community with love, quality, and style for over 15 years. We bring you the latest designs
+            in women's, men's, and kids' clothing along with expert tailoring services.</p>
+          <p class="about-desc">Whether you're shopping for a wedding, festival, or everyday wear, we have something
+            beautiful for everyone — at prices that won't break the bank.</p>
+          <div class="about-highlights">
+            <div class="highlight-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Widest collection of sarees, lehengas & suits</span>
+            </div>
+            <div class="highlight-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Expert tailors for custom stitching</span>
+            </div>
+            <div class="highlight-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Affordable prices — no compromise on quality</span>
+            </div>
+            <div class="highlight-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Trusted by 10,000+ happy customers</span>
+            </div>
+          </div>
+          <div class="about-contact-quick">
+            <a href="tel:+918667328473" class="quick-call">
+              <i class="fas fa-phone"></i> 8667328473
+            </a>
+            <a href="https://wa.me/919442261828?text=Hello%20Sudha%20Dress%20Shop!" class="quick-wa" target="_blank"
+              rel="noopener noreferrer">
+              <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ COLLECTIONS (DRESS SALES) ═══ -->
+  <section class="collections section" id="collections">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-label">Dress Sales</p>
+        <h2 class="section-title">Our <em>Collections</em></h2>
+        <p class="section-sub">Handpicked fashion for every occasion — weddings, festivals, daily wear & more.</p>
+      </div>
+      <div class="collections-grid">
+        <!-- Sarees Card -->
+        <div class="collection-card reveal" id="col-sarees" onclick="openGallery('sarees', 'Sarees')"
+          style="cursor:pointer">
+          <div class="collection-img">
+            <img src="" alt="Sarees Collection" id="img-sarees" />
+            <div class="collection-overlay">
+              <span>Order Now ↗</span>
+            </div>
+          </div>
+          <div class="collection-info">
+            <h3>Sarees</h3>
+            <p>Silk, cotton, georgette, chiffon &amp; designer sarees for all occasions.</p>
+            <div class="collection-price">Starting at <strong>₹499</strong></div>
+          </div>
+        </div>
+        <!-- Lehengas Card -->
+        <div class="collection-card reveal delay-1" id="col-lehengas"
+          onclick="openGallery('lehengas', 'Lehengas & Choli')" style="cursor:pointer">
+          <div class="collection-img">
+            <img src="" alt="Lehenga Choli" id="img-lehengas" />
+            <div class="collection-overlay best-seller">
+              <span>Order Now ↗</span>
+            </div>
+          </div>
+          <div class="collection-info">
+            <h3>Lehengas &amp; Choli</h3>
+            <p>Bridal lehengas, party wear, and festival lehengas with intricate embroidery.</p>
+            <div class="collection-price">Starting at <strong>₹1,499</strong></div>
+          </div>
+        </div>
+        <!-- Salwar Suits Card -->
+        <div class="collection-card reveal delay-2" id="col-suits" onclick="openGallery('suits', 'Salwar Suits')"
+          style="cursor:pointer">
+          <div class="collection-img">
+            <img src="services.png" alt="Salwar Suits" id="img-suits" />
+            <div class="collection-overlay">
+              <span>Order Now ↗</span>
+            </div>
+          </div>
+          <div class="collection-info">
+            <h3>Salwar Suits</h3>
+            <p>Cotton, silk, and designer salwar kameez sets for daily and special wear.</p>
+            <div class="collection-price">Starting at <strong>₹799</strong></div>
+          </div>
+        </div>
+        <!-- Kurtis Card -->
+        <div class="collection-card reveal delay-3" id="col-kurtis" onclick="openGallery('kurtis', 'Kurtis & Tops')"
+          style="cursor:pointer">
+          <div class="collection-img">
+            <img src="" alt="Kurtis &amp; Tops" id="img-kurtis" />
+            <div class="collection-overlay new-arrival">
+              <span>Order Now ↗</span>
+            </div>
+          </div>
+          <div class="collection-info">
+            <h3>Kurtis &amp; Tops</h3>
+            <p>Trendy and comfortable kurtis, tops, and western wear for modern women.</p>
+            <div class="collection-price">Starting at <strong>₹299</strong></div>
+          </div>
+        </div>
+        <!-- Kids Wear Card -->
+        <div class="collection-card reveal delay-1" id="col-kids" onclick="openGallery('kids', 'Kids Wear')"
+          style="cursor:pointer">
+          <div class="collection-img">
+            <img src="" alt="Kids Wear" id="img-kids" />
+            <div class="collection-overlay">
+              <span>Order Now ↗</span>
+            </div>
+          </div>
+          <div class="collection-info">
+            <h3>Kids' Wear</h3>
+            <p>Adorable frocks, ethnic sets, uniforms, and casual clothes for children.</p>
+            <div class="collection-price">Starting at <strong>₹199</strong></div>
+          </div>
+        </div>
+        <!-- Mens Wear Card -->
+        <div class="collection-card reveal delay-2" id="col-mens" onclick="openGallery('mens', 'Mens Wear')"
+          style="cursor:pointer">
+          <div class="collection-img">
+            <img src="" alt="Men's Wear" id="img-mens" />
+            <div class="collection-overlay">
+              <span>Order Now ↗</span>
+            </div>
+          </div>
+          <div class="collection-info">
+            <h3>Men's Wear</h3>
+            <p>Dhotis, veshtis, kurta pajamas, shirts, and ethnic wear for men.</p>
+            <div class="collection-price">Starting at <strong>₹399</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="collections-cta reveal">
+        <a href="#contact" class="btn-primary" id="btn-enquire-collections">
+          <i class="fas fa-phone"></i> Call to Check Stock: 8667328473
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ COLLECTION GALLERY LIGHTBOX MODAL ═══ -->
+  <div id="gallery-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeGallery()">&times;</span>
+      <h2 id="gallery-title" style="margin-bottom: 20px; color: var(--gold); font-family: var(--font-heading);">
+        Collection</h2>
+      <div id="gallery-grid" class="gallery-grid">
+        <!-- Gallery images will be injected here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ORDER FORM MODAL ═══ -->
+  <div id="order-modal" class="modal" style="display:none; align-items:center; justify-content:center; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:2000;">
+    <div class="modal-content" style="max-width:400px; padding:2rem; background:var(--card); border:1px solid var(--border); border-radius:16px; position:relative;">
+      <span class="close-modal" onclick="closeOrderModal()" style="position:absolute; top:15px; right:20px; font-size:1.5rem; cursor:pointer; color:var(--text);">&times;</span>
+      <h2 style="margin-bottom: 5px; color: var(--gold); font-family: var(--font-heading); font-size:1.5rem;">Place Order</h2>
+      <p style="color:var(--muted); font-size:0.85rem; margin-bottom:1.5rem;">Please provide your WhatsApp number so we can confirm your order.</p>
+      
+      <div class="form-group" style="margin-bottom: 1rem; text-align:left;">
+        <label for="order-name" style="display:block; margin-bottom:0.4rem; font-size:0.85rem; color:var(--muted);">Your Name</label>
+        <input type="text" id="order-name" placeholder="Enter your name" style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid var(--border); background:rgba(255,255,255,0.05); color:#fff; font-family:inherit;" required />
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 1.5rem; text-align:left;">
+        <label for="order-phone" style="display:block; margin-bottom:0.4rem; font-size:0.85rem; color:var(--muted);">WhatsApp Number</label>
+        <input type="tel" id="order-phone" placeholder="e.g. 919876543210" style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid var(--border); background:rgba(255,255,255,0.05); color:#fff; font-family:inherit;" required />
+      </div>
+      
+      <button class="btn-primary" onclick="submitOrder()" style="width:100%; justify-content:center; padding:0.8rem; border:none; cursor:pointer; font-weight:600; font-size:0.9rem;">
+        <i class="fab fa-whatsapp"></i> Send Order
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ MY ORDERS MODAL (Customer Portal) ═══ -->
+  <div id="user-orders-modal" class="modal" style="display:none; align-items:center; justify-content:center; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:2000;">
+    <div class="modal-content" style="max-width:600px; padding:2rem; background:var(--card); border:1px solid var(--border); border-radius:20px; position:relative; max-height:80vh; overflow-y:auto;">
+      <span class="close-modal" onclick="closeUserOrdersModal()" style="position:absolute; top:15px; right:20px; font-size:1.5rem; cursor:pointer; color:var(--text);">&times;</span>
+      <h2 style="margin-bottom: 5px; color: var(--gold); font-family: var(--font-heading); font-size:1.8rem;">My Orders</h2>
+      <p style="color:var(--muted); font-size:0.85rem; margin-bottom:1.5rem;">Track your tailoring and dress orders below.</p>
+      
+      <div id="user-orders-list" style="text-align:left;">
+        <p style="color:var(--muted); font-size:0.9rem; padding:2rem 0; text-align:center;">Loading your orders...</p>
+      </div>
+      
+      <div style="margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--border); text-align:center;">
+        <button class="btn-outline" onclick="userLogoutFront()" style="font-size:0.85rem; padding:0.6rem 1.2rem;">
+          <i class="fas fa-sign-out-alt"></i> Logout from Account
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══ OFFERS / ADVERTISEMENT ═══ -->
+  <section class="offers section" id="offers">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-label">Special Deals</p>
+        <h2 class="section-title">Exclusive <em>Offers</em></h2>
+      </div>
+      <div class="offers-grid">
+        <div class="offer-card offer-hot reveal" id="offer-bridal">
+          <div class="offer-ribbon">HOT DEAL</div>
+          <i class="fas fa-heart offer-icon"></i>
+          <h3 id="dyn-offer1-title">Bridal Package</h3>
+          <p class="offer-desc" id="dyn-offer1-desc">Buy any bridal lehenga + get free blouse stitching + 10% off on
+            saree!</p>
+          <div class="offer-badge" id="dyn-offer1-badge">Limited Time</div>
+        </div>
+        <div class="offer-card reveal delay-1" id="offer-combo">
+          <i class="fas fa-tags offer-icon"></i>
+          <h3 id="dyn-offer2-title">Combo Offer</h3>
+          <p class="offer-desc" id="dyn-offer2-desc">Buy 3 sarees and get the 4th at 50% off. Mix and match any design!
+          </p>
+          <div class="offer-badge" id="dyn-offer2-badge">Ongoing</div>
+        </div>
+        <div class="offer-card reveal delay-2" id="offer-stitch">
+          <i class="fas fa-cut offer-icon"></i>
+          <h3 id="dyn-offer3-title">Stitch + Save</h3>
+          <p class="offer-desc" id="dyn-offer3-desc">Purchase fabric from us and get stitching at flat ₹100 off per
+            garment!</p>
+          <div class="offer-badge" id="dyn-offer3-badge">Exclusive</div>
+        </div>
+        <div class="offer-card offer-festival reveal delay-3" id="offer-festival">
+          <div class="offer-ribbon">FESTIVAL</div>
+          <i class="fas fa-star offer-icon"></i>
+          <h3 id="dyn-offer4-title">Festival Special</h3>
+          <p class="offer-desc" id="dyn-offer4-desc">Up to 30% off on select collections during festival seasons. Visit
+            the shop!</p>
+          <div class="offer-badge" id="dyn-offer4-badge">Seasonal</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TAILORING SERVICES ═══ -->
+  <section class="tailoring section" id="tailoring">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-label">Custom Stitching</p>
+        <h2 class="section-title">Expert <em>Tailoring</em> Services</h2>
+        <p class="section-sub">Precision-stitched garments by our experienced tailors — your measurements, your style.
+        </p>
+      </div>
+      <div class="tailoring-grid">
+        <div class="tailor-card reveal" id="tailor-custom">
+          <div class="tailor-icon"><i class="fas fa-ruler-combined" id="dyn-svc1-icon"></i></div>
+          <h3 id="dyn-svc1-title">Custom Stitching</h3>
+          <p id="dyn-svc1-desc">Blouses, salwar suits, kurtas, frocks — stitched to your exact measurements.</p>
+        </div>
+        <div class="tailor-card reveal delay-1" id="tailor-alter">
+          <div class="tailor-icon"><i class="fas fa-scissors" id="dyn-svc2-icon"></i></div>
+          <h3 id="dyn-svc2-title">Alterations</h3>
+          <p id="dyn-svc2-desc">Resizing, hemming, shortening, and repairing any garment quickly and neatly.</p>
+        </div>
+        <div class="tailor-card reveal delay-2" id="tailor-blouse">
+          <div class="tailor-icon"><i class="fas fa-tshirt" id="dyn-svc3-icon"></i></div>
+          <h3 id="dyn-svc3-title">Blouse Stitching</h3>
+          <p id="dyn-svc3-desc">Saree blouses with designer backs, patterns, and embellishments of your choice.</p>
+        </div>
+        <div class="tailor-card reveal delay-3" id="tailor-bridal">
+          <div class="tailor-icon"><i class="fas fa-crown" id="dyn-svc4-icon"></i></div>
+          <h3 id="dyn-svc4-title">Bridal Stitching</h3>
+          <p id="dyn-svc4-desc">Bridal blouses, lehenga cholis, and gown alterations for your perfect wedding look.</p>
+        </div>
+        <div class="tailor-card reveal delay-1" id="tailor-embroidery">
+          <div class="tailor-icon"><i class="fas fa-star" id="dyn-svc5-icon"></i></div>
+          <h3 id="dyn-svc5-title">Embroidery Work</h3>
+          <p id="dyn-svc5-desc">Thread work, mirror work, and zari embroidery added to any garment.</p>
+        </div>
+        <div class="tailor-card reveal delay-2" id="tailor-kids">
+          <div class="tailor-icon"><i class="fas fa-child" id="dyn-svc6-icon"></i></div>
+          <h3 id="dyn-svc6-title">Kids' Stitching</h3>
+          <p id="dyn-svc6-desc">School uniforms, frocks, ethnic wear and party outfits for children.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PRICING ═══ -->
+  <section class="pricing section" id="pricing">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-label">Transparent Rates</p>
+        <h2 class="section-title">Tailoring <em>Prices</em></h2>
+        <p class="section-sub">We believe in fair and transparent pricing — no hidden charges.</p>
+      </div>
+      <div class="pricing-wrap">
+        <div class="pricing-table reveal">
+          <table>
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Price</th>
+                <th>Delivery</th>
+              </tr>
+            </thead>
+            <tbody id="pricing-tbody">
+              <tr>
+                <td><i class="fas fa-dot-circle"></i> <span id="dyn-price1-service">Blouse Stitching (Simple)</span>
+                </td>
+                <td id="dyn-price1-price">₹150 – ₹250</td>
+                <td id="dyn-price1-delivery">2–3 days</td>
+              </tr>
+              <tr class="highlight-row">
+                <td><i class="fas fa-dot-circle"></i> <span id="dyn-price2-service">Blouse (Designer / Fancy)</span>
+                </td>
+                <td id="dyn-price2-price">₹300 – ₹600</td>
+                <td id="dyn-price2-delivery">3–5 days</td>
+              </tr>
+              <tr>
+                <td><i class="fas fa-dot-circle"></i> <span id="dyn-price3-service">Salwar Kameez (3 pcs)</span></td>
+                <td id="dyn-price3-price">₹600 – ₹1000</td>
+                <td id="dyn-price3-delivery">4–6 days</td>
+              </tr>
+              <tr class="highlight-row">
+                <td><i class="fas fa-dot-circle"></i> <span id="dyn-price4-service">Kurta / Kurti</span></td>
+                <td id="dyn-price4-price">₹300 – ₹500</td>
+                <td id="dyn-price4-delivery">2–4 days</td>
+              </tr>
+              <tr>
+                <td><i class="fas fa-dot-circle"></i> <span id="dyn-price5-service">Simple Frock / Top</span></td>
+                <td id="dyn-price5-price">₹200 – ₹400</td>
+                <td id="dyn-price5-delivery">2–3 days</td>
+              </tr>
+              <tr class="highlight-row">
+                <td><i class="fas fa-dot-circle"></i> <span id="dyn-price6-service">Kids' Outfit</span></td>
+                <td id="dyn-price6-price">₹150 – ₹350</td>
+                <td id="dyn-price6-delivery">2–3 days</td>
+              </tr>
+              <tr>
+                <td><i class="fas fa-dot-circle"></i> <span id="dyn-price7-service">Alteration / Repair</span></td>
+                <td id="dyn-price7-price">₹50 – ₹200</td>
+                <td id="dyn-price7-delivery">1–2 days</td>
+              </tr>
+              <tr class="highlight-row">
+                <td><i class="fas fa-dot-circle"></i> <span id="dyn-price8-service">Bridal Blouse (Special)</span></td>
+                <td id="dyn-price8-price">₹800 – ₹2000</td>
+                <td id="dyn-price8-delivery">5–7 days</td>
+              </tr>
+              <tr>
+                <td><i class="fas fa-dot-circle"></i> <span id="dyn-price9-service">Embroidery Work</span></td>
+                <td id="dyn-price9-price">₹200 onwards</td>
+                <td id="dyn-price9-delivery">Varies</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="table-note" id="dyn-price-note">* Prices vary based on fabric &amp; design complexity. Call for
+            exact quote: <a href="tel:+918667328473">86673 28473</a></p>
+
+        </div>
+        <div class="pricing-cta reveal delay-2">
+          <div class="cta-box">
+            <div class="cta-icon"><i class="fas fa-phone-alt"></i></div>
+            <h3>Get a Free Quote</h3>
+            <p>Not sure about the price? Call or WhatsApp us with your requirements and we'll give you an instant quote!
+            </p>
+            <a href="tel:+918667328473" class="btn-primary cta-btn">
+              <i class="fas fa-phone"></i> 86673 28473
+            </a>
+            <a href="https://wa.me/919442261828?text=Hello%20Sudha%20Dress%20Shop%2C%20I%20need%20a%20quote%20for%20tailoring."
+              class="btn-wa-cta" target="_blank">
+              <i class="fab fa-whatsapp"></i> WhatsApp for Quote
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CONTACT ═══ -->
+  <section class="contact section" id="contact">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-label">Reach Us</p>
+        <h2 class="section-title">Visit <em>Sudha Dress Shop</em></h2>
+        <p class="section-sub">We'd love to help you find the perfect outfit. Come visit us or get in touch!</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <div class="cinfo-card" id="cinfo-phone">
+            <div class="cinfo-icon"><i class="fas fa-phone-alt"></i></div>
+            <div class="cinfo-detail">
+              <h4>Call Us</h4>
+              <a href="tel:+918667328473"> 86673 28473</a>
+            </div>
+          </div>
+          <div class="cinfo-card" id="cinfo-whatsapp">
+            <div class="cinfo-icon wa"><i class="fab fa-whatsapp"></i></div>
+            <div class="cinfo-detail">
+              <h4>WhatsApp</h4>
+              <a href="https://wa.me/+919442261828" target="_blank">94422 61828</a>
+            </div>
+          </div>
+          <div class="cinfo-card" id="cinfo-hours">
+            <div class="cinfo-icon"><i class="fas fa-clock"></i></div>
+            <div class="cinfo-detail">
+              <h4>Shop Hours</h4>
+              <p>Mon – Sat: 9:00 AM – 9:00 PM</p>
+              <p>Sunday: 10:00 AM – 6:00 PM</p>
+            </div>
+          </div>
+          <div class="cinfo-card" id="cinfo-location">
+            <div class="cinfo-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div class="cinfo-detail">
+              <h4>Find Us</h4>
+              <p>Sudha Dress Shop<br />Your Area, Your City</p>
+            </div>
+          </div>
+          <div class="contact-actions">
+            <!-- WhatsApp direct link — works on all devices -->
+            <a href="https://wa.me/+919442261828?text=Hello%20Sudha%20Dress%20Shop%2C%20I%20would%20like%20to%20enquire."
+              class="btn-whatsapp" id="btn-wa-contact" target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-whatsapp"></i> WhatsApp Us
+            </a>
+            <a href="tel:+918667328473" class="btn-call" id="btn-call-contact">
+              <i class="fas fa-phone"></i> Call Now
+            </a>
+          </div>
+        </div>
+
+        <div class="contact-form-wrap reveal delay-1">
+          <form class="contact-form" id="contact-form" onsubmit="handleFormSubmit(event)">
+            <h3>Send an Enquiry</h3>
+            <div class="form-group">
+              <label for="cname">Your Name</label>
+              <input type="text" id="cname" name="name" placeholder="Enter your name" required />
+            </div>
+            <div class="form-group">
+              <label for="cphone">Phone Number</label>
+              <input type="tel" id="cphone" name="phone" placeholder="Enter your mobile number" required />
+            </div>
+            <div class="form-group">
+              <label for="cservice">Enquiry About</label>
+              <select id="cservice" name="service">
+                <option value="">-- Select category --</option>
+                <optgroup label="Dress Sales">
+                  <option value="Sarees">Sarees</option>
+                  <option value="Lehengas">Lehengas</option>
+                  <option value="Salwar Suits">Salwar Suits</option>
+                  <option value="Kurtis &amp; Tops">Kurtis &amp; Tops</option>
+                  <option value="Kids Wear">Kids' Wear</option>
+                  <option value="Mens Wear">Men's Wear</option>
+                </optgroup>
+                <optgroup label="Tailoring">
+                  <option value="Blouse Stitching">Blouse Stitching</option>
+                  <option value="Custom Stitching">Custom Stitching</option>
+                  <option value="Alterations">Alterations</option>
+                  <option value="Bridal Stitching">Bridal Stitching</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="cmessage">Message</label>
+              <textarea id="cmessage" name="message" placeholder="Tell us what you're looking for..."
+                rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn-submit" id="btn-submit-form">
+              <i class="fab fa-whatsapp"></i> Send via WhatsApp
+            </button>
+            <div class="form-success" id="form-success">
+              <i class="fas fa-check-circle"></i> Opening WhatsApp... We'll reply shortly!
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <div class="logo-icon"><i class="fas fa-store"></i></div>
+            <div class="logo-text">
+              <span class="logo-main">Sudha <em>Dress Shop</em></span>
+              <span class="logo-tagline">Sales & Tailoring</span>
+            </div>
+          </div>
+          <p>Your trusted neighbourhood fashion store for over 15 years. Premium dress sales and expert tailoring at
+            affordable prices.</p>
+          <div class="footer-socials">
+            <a href="https://wa.me/+919442261828" id="footer-wa" aria-label="WhatsApp"><i
+                class="fab fa-whatsapp"></i></a>
+
+            <a href="https://instagram.com/mohanraj.sudha" id="footer-ig" aria-label="Instagram" target="_blank"><i
+                class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#collections">Collections</a></li>
+            <li><a href="#tailoring">Tailoring</a></li>
+            <li><a href="#offers">Offers</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="login.html">Login Portal</a></li>
+          </ul>
+        </div>
+        <div class="footer-services">
+          <h4>What We Sell</h4>
+          <ul>
+            <li>Silk & Cotton Sarees</li>
+            <li>Designer Lehengas</li>
+            <li>Salwar Suits & Kurtis</li>
+            <li>Bridal Wear</li>
+            <li>Kids' Dresses</li>
+            <li>Men's Ethnic Wear</li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact Details</h4>
+          <p><i class="fas fa-phone"></i> <a href="tel:8667328473">86673 28473</a></p>
+          <p><i class="fab fa-whatsapp"></i> <a href="https://wa.me/+919442261828">94422 61828</a></p>
+          <p><i class="fas fa-map-marker-alt"></i> Your Area, Your City</p>
+          <p><i class="fas fa-clock"></i> Mon–Sat: 9AM – 9PM</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Sudha Dress Shop. All Rights Reserved.</p>
+        <p>Made with <i class="fas fa-heart"></i> for Fashion Lovers</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp Button — direct link works on all devices -->
+  <a href="https://wa.me/+919442261828?text=Hello%20Sudha%20Dress%20Shop!" class="fab-whatsapp" id="fab-whatsapp"
+    target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- Scroll To Top -->
+  <div class="scroll-top-btn" id="scrollTopBtn" onclick="scrollToTop()">
+    <i class="fas fa-arrow-up"></i>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
