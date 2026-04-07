@@ -14,6 +14,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="login.css" />
+  <!-- Google Identity Services SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     /* ── Forgot Password Modal ── */
     .forgot-modal-overlay {
@@ -315,7 +317,7 @@
       <p>Please provide your WhatsApp number so you can track your current and future orders.</p>
       <div class="input-wrap">
         <i class="fas fa-mobile-alt input-icon"></i>
-        <input type="tel" id="google-phone" placeholder="e.g. 919876543210" required />
+        <input type="tel" id="google-phone" placeholder="e.g. 1234567890" required />
       </div>
       <div class="forgot-modal-btns">
         <button class="btn-send-reset" onclick="saveGooglePhoneNumber()">
@@ -417,9 +419,10 @@
 
           <div class="auth-divider"><span>or continue with</span></div>
           <div class="social-auth">
-            <button type="button" class="btn-social google" id="btn-google-login" onclick="handleGoogleLogin()">
-              <i class="fab fa-google"></i> Sign in with Google
-            </button>
+            <!-- Official Google Button Container -->
+            <div id="google-btn-customer"
+              style="width: 100%; display: flex; justify-content: center; margin-bottom: 10px;"></div>
+
           </div>
 
           <p class="switch-prompt">
@@ -541,9 +544,13 @@
 
           <div class="auth-divider"><span>or access via</span></div>
           <div class="social-auth">
-            <button type="button" class="btn-social google" id="btn-google-admin" onclick="handleGoogleLogin('admin')">
-              <i class="fab fa-google"></i> Owner Sign-in with Google
-            </button>
+            <!-- Official Google Button Container for Admin -->
+            <div id="google-btn-admin"
+              style="width: 100%; display: flex; justify-content: center; margin-bottom: 10px;"></div>
+
+
+
+
           </div>
 
           <div class="auth-error" id="admin-error"></div>
@@ -576,6 +583,23 @@
     </div>
 
   </div><!-- /.login-wrapper -->
+
+  <!-- Google Profile Sync Modal -->
+  <div class="forgot-modal-overlay" id="google-profile-modal">
+    <div class="forgot-modal">
+      <h3><i class="fab fa-whatsapp"></i> Link Mobile Number</h3>
+      <p>Sync your Google Email with your WhatsApp number for order tracking.</p>
+      <div class="input-wrap">
+        <i class="fas fa-phone input-icon"
+          style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gold);"></i>
+        <input type="tel" id="google-phone" placeholder="Your WhatsApp Mobile Number"
+          style="padding-left: 2.8rem; width: 100%;" required />
+      </div>
+      <button class="btn-auth" onclick="saveGooglePhoneNumber()" style="margin-top: 1.5rem; width: 100%;">
+        <i class="fas fa-link"></i> Link & Sync Account
+      </button>
+    </div>
+  </div>
 
   <!-- Firebase SDK (compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>

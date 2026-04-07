@@ -307,11 +307,61 @@ function loadImagesFromJSONBlobOrIDB() {
     loadFromIDB();
   }
 }
+// ── Initialize Google Identity Services (One Tap) ──
+function initializeGSI() {
+  if (typeof google === 'undefined' || typeof GOOGLE_CLIENT_ID === 'undefined' || GOOGLE_CLIENT_ID.includes('YOUR')) {
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGSICallback,
+    auto_select: true
+  });
+  google.accounts.id.prompt();
+}
+
+async function handleGSICallback(response) {
+  try {
+    const base64Url = response.credential.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    handleGoogleSuccess(JSON.parse(jsonPayload));
+  } catch (err) { console.error('GSI Error:', err); }
+}
+
+let pendingGoogleUser = null;
+async function handleGoogleSuccess(gUser) {
+  const users = JSON.parse(localStorage.getItem('sudha_users') || '[]');
+  const existing = users.find(u => u.email === gUser.email);
+  if (existing) {
+    sessionStorage.setItem('sudha_current_user', JSON.stringify({ name: existing.name, email: existing.email, phone: existing.phone, role: 'customer' }));
+    location.reload();
+  } else {
+    pendingGoogleUser = { name: gUser.displayName || gUser.name, email: gUser.email, photo: gUser.photoURL || gUser.picture };
+    const modal = document.getElementById('google-profile-modal');
+    if (modal) modal.style.display = 'flex';
+  }
+}
+
+function saveGooglePhoneNumber() {
+  const phone = document.getElementById('google-phone').value.trim();
+  if (phone.length < 10) { alert('Please enter a valid WhatsApp number.'); return; }
+  if (pendingGoogleUser) {
+    const newUser = { ...pendingGoogleUser, phone, createdAt: new Date().toISOString(), password: 'GOOGLE_AUTH' };
+    const users = JSON.parse(localStorage.getItem('sudha_users') || '[]');
+    users.push(newUser);
+    localStorage.setItem('sudha_users', JSON.stringify(users));
+    sessionStorage.setItem('sudha_current_user', JSON.stringify({ name: newUser.name, phone: newUser.phone, role: 'customer' }));
+    location.reload();
+  }
+}
+
 // ── Load from localStorage on start ──
 window.addEventListener('DOMContentLoaded', () => {
   applyDynamicContent(getSiteData());
   loadImagesFromJSONBlobOrIDB();
   updateUserNavbar();
+  initializeGSI();
 
   // ── JSONBlob auto-sync ──
   if (typeof JSONBLOB_ID !== 'undefined' && JSONBLOB_ID) {
@@ -554,59 +604,87 @@ window.onclick = function (event) {
 async function showUserOrders() {
   const modal = document.getElementById('user-orders-modal');
   const list = document.getElementById('user-orders-list');
+  const phoneText = document.getElementById('portal-user-phone');
   if (!modal || !list) return;
 
   modal.style.display = 'flex';
-  list.innerHTML = `<p style="color:var(--gold); font-size:0.9rem; padding:2rem 0; text-align:center;"><i class="fas fa-spinner fa-spin"></i> Fetching your orders...</p>`;
+  list.innerHTML = `<p style="text-align:center; padding:3rem; color:#c9a84c;"><i class="fas fa-spinner fa-spin"></i> Linking to Cloud Sync...</p>`;
 
   const currentUser = JSON.parse(sessionStorage.getItem('sudha_current_user') || 'null');
   if (!currentUser || !currentUser.phone) {
-    list.innerHTML = `<p style="color:#f87171; text-align:center;">Please login to see your orders.</p>`;
+    list.innerHTML = `<div style="text-align:center; padding:2rem;"><i class="fas fa-user-lock" style="font-size:2rem; margin-bottom:1rem; opacity:0.3;"></i><p>Please login to your account to view your history.</p></div>`;
     return;
   }
 
   const userPhone = currentUser.phone.replace(/[^0-9]/g, '');
+  if (phoneText) phoneText.textContent = `Logged in as: ${currentUser.phone}`;
 
   try {
     const res = await fetch(`https://jsonblob.com/api/jsonBlob/${JSONBLOB_ID}?t=${Date.now()}`);
     const data = await res.json();
     
-    // Combine pending orders and confirmed sales for this user
-    let userOrders = [];
-    if (data && data.orders) {
-       const pending = data.orders.filter(o => (o.customerPhone || '').replace(/[^0-9]/g, '') === userPhone);
-       pending.forEach(o => userOrders.push({ ...o, status: 'Pending Verification' }));
-    }
-    if (data && data.sales) {
-       const completed = data.sales.filter(o => (o.customerPhone || '').replace(/[^0-9]/g, '') === userPhone);
-       completed.forEach(o => userOrders.push({ ...o, status: 'Order Confirmed ✅' }));
-    }
+    // Store data globally for switching tabs
+    window.SUDHA_PORTAL_DATA = {
+        pending: (data.orders || []).filter(o => (o.customerPhone || '').replace(/[^0-9]/g, '') === userPhone),
+        sales: (data.sales || []).filter(o => (o.customerPhone || '').replace(/[^0-9]/g, '') === userPhone)
+    };
 
-    if (userOrders.length === 0) {
-      list.innerHTML = `<p style="color:var(--muted); text-align:center; padding:2rem 0;">You haven't placed any orders yet.</p>`;
-      return;
-    }
-
-    // Sort by date (newest first)
-    userOrders.sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
-
-    list.innerHTML = userOrders.map(o => `
-      <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:12px; padding:1rem; margin-bottom:1rem; display:flex; gap:1rem; align-items:center;">
-        <img src="${o.imgUrl || 'placeholder.png'}" style="width:60px; height:60px; object-fit:cover; border-radius:8px; border:1px solid var(--border);" />
-        <div style="flex:1;">
-          <h4 style="color:var(--gold); font-size:0.95rem; margin-bottom:2px;">${o.itemName || 'Dress Order'}</h4>
-          <p style="font-size:0.75rem; color:var(--muted); margin-bottom:8px;">Ordered on ${new Date(o.date).toLocaleDateString()}</p>
-          <span style="font-size:0.75rem; padding:3px 8px; border-radius:4px; font-weight:700; ${o.status.includes('Confirmed') ? 'background:rgba(34,197,94,0.15); color:#4ade80;' : 'background:rgba(201,168,76,0.15); color:var(--gold);'}">
-            ${o.status}
-          </span>
-        </div>
-      </div>
-    `).join('');
+    // Default to pending tab
+    switchPortalTab('pending');
 
   } catch(e) {
-    list.innerHTML = `<p style="color:#f87171; text-align:center;">Error loading orders. Please try again later.</p>`;
+    list.innerHTML = `<p style="color:#f87171; text-align:center;">Cloud connection failed. Please try again.</p>`;
     console.error('Portal load failed:', e);
   }
+}
+
+function switchPortalTab(type) {
+    const list = document.getElementById('user-orders-list');
+    const btnP = document.getElementById('tab-pending');
+    const btnS = document.getElementById('tab-sales');
+    
+    // Styling toggles
+    if (btnP && btnS) {
+        if (type === 'pending') {
+            btnP.style.background = '#c9a84c'; btnP.style.color = '#000';
+            btnS.style.background = 'transparent'; btnS.style.color = 'rgba(255,255,255,0.5)';
+        } else {
+            btnS.style.background = '#c9a84c'; btnS.style.color = '#000';
+            btnP.style.background = 'transparent'; btnP.style.color = 'rgba(255,255,255,0.5)';
+        }
+    }
+
+    const items = window.SUDHA_PORTAL_DATA ? window.SUDHA_PORTAL_DATA[type] : [];
+    
+    if (!items || items.length === 0) {
+        list.innerHTML = `<div style="text-align:center; padding:3rem; opacity:0.4;">
+            <i class="fas fa-box-open" style="font-size:2.5rem; margin-bottom:1rem; color:#777;"></i>
+            <p style="color:#fff;">No ${type === 'pending' ? 'pending orders' : 'sales history'} found.</p>
+        </div>`;
+        return;
+    }
+
+    items.sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+    list.innerHTML = items.map(o => `
+        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(201,168,76,0.15); border-radius:15px; padding:1.2rem; margin-bottom:1rem; display:flex; gap:1.2rem; align-items:center; transition:0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+            <div style="position:relative;">
+                <img src="${o.imgUrl || 'https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=100'}" style="width:70px; height:70px; object-fit:cover; border-radius:12px; border:1px solid rgba(201,168,76,0.3);" />
+                <div style="position:absolute; top:-5px; right:-5px; width:15px; height:15px; border-radius:50%; background:${type === 'pending' ? '#c9a84c' : '#4ade80'}; border:2px solid #1a1209;"></div>
+            </div>
+            <div style="flex:1;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <h4 style="color:#fff; font-size:1rem; margin-bottom:4px; font-family: Playfair Display, serif;">${o.itemName || 'Dress Order'}</h4>
+                    <span style="font-size:0.65rem; color:#c9a84c; opacity:0.8; background:rgba(201,168,76,0.1); padding:2px 8px; border-radius:4px;">#${(o.id || '000').slice(-5)}</span>
+                </div>
+                <p style="font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:10px;">${type === 'pending' ? 'Verification in progress' : 'Order Confirmed ✅'}</p>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.75rem; color:rgba(255,255,255,0.4);"><i class="far fa-calendar-alt"></i> ${new Date(o.date).toLocaleDateString()}</span>
+                    <button onclick="window.open('https://wa.me/919442261828?text=Enquiry about my order ${(o.id || '').slice(-5)}', '_blank')" style="background:none; border:none; color:#4ade80; cursor:pointer; font-size:0.75rem; font-weight:600;"><i class="fab fa-whatsapp"></i> Help</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
 }
 
 function closeUserOrdersModal() {
