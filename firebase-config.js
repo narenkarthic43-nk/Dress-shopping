@@ -11,7 +11,7 @@ const IMGBB_API_KEY = 'YOUR_KEY_HERE';
 // ── STEP 3: REAL FIREBASE KEYS (REQUIRED FOR GOOGLE LOGIN) ──
 // Get these from: https://console.firebase.google.com
 const firebaseConfig = {
-  apiKey: "GOOGLE_CLIENT_ID",
+  apiKey: "YOUR_API_KEY_HERE",
   authDomain: "sudha-dress-shop.firebaseapp.com",
 };
 
